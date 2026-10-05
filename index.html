@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shouvik Mondal</title>
+<meta name="description" content="Shouvik Mondal — Junior Research Fellow, Advanced Computing and Microelectronics Unit, Indian Statistical Institute, Kolkata. Computational geometry, visibility, art gallery and witness set problems.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><polygon points='2,28 30,28 24,8 18,18 10,5' fill='%238b1e1e'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#fcfbf8; --ink:#1b1b1b; --soft:#626262; --rule:#e2ded4;
+  --acc:#8b1e1e; --tint:rgba(139,30,30,.10); --tint2:rgba(139,30,30,.32);
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#131313; --ink:#e7e5e0; --soft:#a29f98; --rule:#2d2c2a;
+        --acc:#e3826f; --tint:rgba(227,130,111,.12); --tint2:rgba(227,130,111,.38)}
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:18px/1.62 "Source Serif 4",Georgia,"Times New Roman",serif;
+  font-optical-sizing:auto;-webkit-font-smoothing:antialiased}
+a{color:var(--acc);text-decoration:underline;text-decoration-thickness:1px;
+  text-underline-offset:3px;text-decoration-color:var(--tint2)}
+a:hover{text-decoration-color:var(--acc)}
+.page{max-width:900px;margin:0 auto;padding:56px 28px 36px}
+.sansc{font-family:"Source Sans 3","Helvetica Neue",Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+
+/* ---------- masthead + tabs ---------- */
+.mast h1{font-weight:600;font-size:46px;line-height:1.1;margin:0 0 6px;letter-spacing:-.01em}
+.mast .tag{margin:0 0 26px;color:var(--soft);font-style:italic}
+.tabs{position:relative;display:flex;flex-wrap:wrap;gap:6px 34px;padding:13px 0;
+  border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+.tabs a{font:600 13.5px/1.4 "Source Sans 3",sans-serif;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);text-decoration:none;padding:2px 0;transition:color .2s}
+.tabs a:hover,.tabs a.on{color:var(--ink)}
+.ind{position:absolute;bottom:-1px;left:0;height:2px;background:var(--acc);width:0;
+  transition:transform .35s cubic-bezier(.4,.1,.2,1),width .35s cubic-bezier(.4,.1,.2,1)}
+
+/* ---------- tab content ---------- */
+.tab{padding-top:34px;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tab{animation:none}.ind{transition:none}}
+h2{margin:40px 0 14px;font:600 13px/1.4 "Source Sans 3",sans-serif;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--soft)}
+h2:first-child{margin-top:0}
+p{margin:0 0 16px}
+
+/* home */
+.intro{display:grid;grid-template-columns:1fr 180px;gap:40px;align-items:start}
+.photo{position:relative;width:180px;aspect-ratio:4/5;background:var(--tint);
+  display:grid;place-items:center;font-style:italic;font-size:52px;color:var(--acc);
+  box-shadow:0 18px 40px -24px rgba(0,0,0,.4)}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.interests{font-style:italic;color:var(--soft)}
+table.contact{border-collapse:collapse;font-size:17px}
+table.contact th{text-align:left;vertical-align:top;padding:2px 26px 2px 0;white-space:nowrap;
+  font:600 12.5px/2.1 "Source Sans 3",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--soft)}
+table.contact td{padding:2px 0}
+
+figure{margin:6px 0 0}
+figure svg{width:100%;height:auto;display:block;overflow:visible}
+.poly{fill:none;stroke:var(--ink);stroke-width:1.4;stroke-linejoin:round}
+.base{stroke:var(--acc);stroke-width:3.5;stroke-linecap:round}
+.fan{fill:var(--tint);transition:fill .25s}
+.guard{fill:var(--acc);stroke:var(--paper);stroke-width:2.5;transition:r .2s}
+.pair{cursor:pointer}
+.pair:hover .fan,.pair.on .fan{fill:var(--tint2)}
+.pair:hover .guard{r:8}
+figcaption{font-size:15px;color:var(--soft);margin-top:12px;line-height:1.5}
+figcaption b{font-weight:600;color:var(--ink)}
+
+ul.news{list-style:none;margin:0;padding:0}
+ul.news li{display:grid;grid-template-columns:92px 1fr;gap:14px;margin-bottom:10px}
+.d{font:13.5px/1.9 "Source Sans 3",sans-serif;letter-spacing:.06em;color:var(--soft);text-transform:uppercase}
+
+/* publications */
+.year{font:600 13px "Source Sans 3",sans-serif;letter-spacing:.14em;color:var(--soft);margin:0 0 12px}
+ol.papers{list-style:none;margin:0 0 26px;padding:0;counter-reset:p var(--n)}
+ol.papers li{position:relative;padding-left:46px;margin-bottom:24px;counter-increment:p -1}
+ol.papers li::before{content:"[" counter(p) "]";position:absolute;left:0;top:1px;
+  font:14px/1.9 "Source Sans 3",sans-serif;color:var(--soft)}
+.pt{font-weight:600}
+.au{display:block}
+.me{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--soft)}
+.ven{display:block;color:var(--soft)}
+.ven i{color:var(--ink)}
+.pl{display:block;margin-top:3px;font:14.5px "Source Sans 3",sans-serif;letter-spacing:.02em}
+.pl a,.pl button{margin-right:14px}
+.pl button{font:inherit;color:var(--acc);background:none;border:0;padding:0;cursor:pointer;
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--tint2)}
+.pl button:hover,.pl button[aria-expanded="true"]{text-decoration-color:var(--acc)}
+.drop{margin:10px 0 0;padding:12px 16px;border-left:2px solid var(--acc);background:var(--tint);font-size:16px}
+.drop pre{margin:0;font:13px/1.55 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+.muted{color:var(--soft);font-size:16px}
+
+/* cv */
+.row{display:grid;grid-template-columns:110px 1fr;gap:14px;margin-bottom:12px}
+.row .sub{display:block;color:var(--soft)}
+.cvbar{display:flex;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.btn{font:600 13px "Source Sans 3",sans-serif;letter-spacing:.1em;text-transform:uppercase;
+  text-decoration:none;color:var(--acc);border:1px solid var(--acc);padding:7px 16px;transition:background .2s,color .2s}
+.btn:hover{background:var(--acc);color:var(--paper)}
+.cvbox{border:1px solid var(--rule);background:var(--tint)}
+.cvbox iframe{display:block;width:100%;height:82vh;border:0;background:#fff}
+.cvbox .ph{margin:0;padding:48px 24px;text-align:center;color:var(--soft);font-style:italic}
+code{font:14px ui-monospace,Menlo,Consolas,monospace}
+
+footer{border-top:1px solid var(--rule);padding-top:16px;margin-top:56px;
+  font:13.5px "Source Sans 3",sans-serif;color:var(--soft);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+
+@media (max-width:680px){
+  body{font-size:17px}
+  .page{padding-top:34px}
+  .mast h1{font-size:36px}
+  .tabs{gap:6px 24px}
+  .intro{grid-template-columns:1fr;gap:20px}
+  .photo{width:140px;order:-1;font-size:40px}
+  ul.news li,.row{grid-template-columns:1fr;gap:0}
+  .cvbox iframe{height:70vh}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ============================ MASTHEAD ============================ -->
+<header class="mast">
+  <h1>Shouvik Mondal</h1>
+  <p class="tag">Junior Research Fellow · Indian Statistical Institute, Kolkata</p>
+  <nav class="tabs" role="tablist">
+    <a href="#home" data-t="home" role="tab">Home</a>
+    <a href="#publications" data-t="publications" role="tab">Publications</a>
+    <a href="#cv" data-t="cv" role="tab">CV</a>
+    <!-- EDIT (optional): <a href="#talks" data-t="talks" role="tab">Talks</a>  (see template at the bottom) -->
+    <span class="ind" aria-hidden="true"></span>
+  </nav>
+</header>
+
+<main>
+<!-- ============================ HOME ============================ -->
+<section class="tab" id="home">
+  <div class="intro">
+    <div>
+      <p>I am a Junior Research Fellow at the Advanced Computing and Microelectronics Unit (ACMU),
+        <a href="https://www.isical.ac.in/">Indian Statistical Institute, Kolkata</a>.
+        <!-- EDIT (optional): "I am advised by Prof. Sasanka Roy." --></p>
+      <p>I work in computational geometry, mostly on problems of visibility. How few guards are
+        needed to see all of a polygon? This is the art gallery problem. Its dual, the
+        witness set problem, asks how many points can be placed so that no single guard sees two
+        of them. My recent work gives exact and efficient algorithms for both questions on
+        weak visibility polygons, the polygons that are entirely visible from one of their edges.</p>
+      <p>Here is my <a href="#cv" data-t="cv">curriculum vitae</a>.</p>
+    </div>
+    <!-- EDIT: add a portrait photo named profile.jpg (roughly 4:5). Until then, a monogram is shown. -->
+    <div class="photo"><img src="profile.jpg" alt="Shouvik Mondal" onerror="this.remove()">SM</div>
+  </div>
+
+  <h2>Contact</h2>
+  <table class="contact">
+    <tr><th>Email</th><td><a id="mail" href="#">shouvik.math [at] gmail [dot] com</a></td></tr>
+    <tr><th>Affiliation</th><td>Advanced Computing and Microelectronics Unit<br>
+      Indian Statistical Institute<br>203 B. T. Road, Kolkata 700108<br>West Bengal, India</td></tr>
+    <!-- EDIT (optional): <tr><th>Office</th><td>Room ..., ... Building</td></tr> -->
+  </table>
+
+  <h2>Research interests</h2>
+  <p class="interests">Computational geometry · visibility and art gallery problems · witness
+    sets · exact and output-sensitive algorithms · geometric intersection graphs</p>
+
+  <figure>
+    <svg viewBox="0 0 640 160" role="img" aria-label="A monotone mountain with three guards on its base edge; shaded regions are parts of what each guard sees">
+      <polygon class="poly" points="20,140 20,60 80,30 120,90 170,20 230,70 260,40 320,100 370,25 430,80 470,35 520,95 570,30 620,70 620,140"/>
+      <line class="base" x1="20" y1="140" x2="620" y2="140"/>
+      <g class="pair"><polygon class="fan" points="150,140 120,90 170,20 230,70"/><circle class="guard" cx="150" cy="140" r="6"/></g>
+      <g class="pair"><polygon class="fan" points="350,140 320,100 370,25 430,80"/><circle class="guard" cx="350" cy="140" r="6"/></g>
+      <g class="pair"><polygon class="fan" points="550,140 520,95 570,30 620,70"/><circle class="guard" cx="550" cy="140" r="6"/></g>
+    </svg>
+    <figcaption><b>Figure 1.</b> A monotone mountain, which is a weak visibility polygon with
+      respect to its base edge (red). Each guard on the base sees at least the shaded region
+      above it. Hover over a guard to highlight its region.</figcaption>
+  </figure>
+
+  <h2>News</h2>
+  <ul class="news">
+    <li><span class="d">Sep 2026</span>
+      <span>New preprint on arXiv: <a href="https://arxiv.org/abs/2609.24460"><i>Witness Set in Weak Visibility Polygons is Polynomial-Time Solvable</i></a>.</span></li>
+    <li><span class="d">Sep 2026</span>
+      <span>New preprint on arXiv: <a href="https://arxiv.org/abs/2609.15510"><i>Perfectly Guarding Straits: Exact Algorithms for Weak Visibility Polygons</i></a>.</span></li>
+    <!-- EDIT: add newer items at the top -->
+  </ul>
+</section>
+
+<!-- ============================ PUBLICATIONS ============================ -->
+<section class="tab" id="publications">
+  <!-- EDIT: set --n to (number of papers + 1). Papers are numbered downward, newest first. -->
+  <p class="year">2026</p>
+  <ol class="papers" style="--n:3">
+    <li>
+      <span class="pt">Witness Set in Weak Visibility Polygons is Polynomial-Time Solvable.</span>
+      <span class="au">Udvas Das, <span class="me">Shouvik Mondal</span>, Sasanka Roy.</span>
+      <span class="ven"><i>Preprint</i>, arXiv:2609.24460, 2026.</span>
+      <span class="pl">
+        <a href="https://arxiv.org/abs/2609.24460">arXiv</a>
+        <a href="https://arxiv.org/pdf/2609.24460">PDF</a>
+        <button data-for="s2">Summary</button>
+        <button data-for="b2">BibTeX</button>
+      </span>
+      <div class="drop" id="s2" hidden>The first exact polynomial-time algorithms for the witness
+        set problem in weak visibility polygons. One algorithm handles the case where witnesses
+        must be chosen from a given set of m points and runs in O(n + m log(n+m)) time; the
+        other handles witnesses placed anywhere in the polygon.</div>
+      <div class="drop" id="b2" hidden><pre>@misc{das2026witness,
+  title         = {Witness Set in Weak Visibility Polygons is Polynomial-Time Solvable},
+  author        = {Das, Udvas and Mondal, Shouvik and Roy, Sasanka},
+  year          = {2026},
+  eprint        = {2609.24460},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CG}
+}</pre></div>
+    </li>
+
+    <li>
+      <span class="pt">Perfectly Guarding Straits: Exact Algorithms for Weak Visibility Polygons.</span>
+      <span class="au"><span class="me">Shouvik Mondal</span>, Udvas Das, Sasanka Roy.</span>
+      <span class="ven"><i>Preprint</i>, arXiv:2609.15510, 2026.</span>
+      <span class="pl">
+        <a href="https://arxiv.org/abs/2609.15510">arXiv</a>
+        <a href="https://arxiv.org/pdf/2609.15510">PDF</a>
+        <button data-for="s1">Summary</button>
+        <button data-for="b1">BibTeX</button>
+      </span>
+      <div class="drop" id="s1" hidden>Guards may stand only on the base edge of a weak
+        visibility polygon. If they cover the boundary they also cover the interior, so the
+        problem becomes one-dimensional. We give an exact, output-sensitive algorithm, and each
+        solution it returns comes with a witness set of the same size that proves it optimal.
+        We also show a tight Θ(n log n) bound for vertex guarding and give faster algorithms
+        for altitude terrain guarding.</div>
+      <div class="drop" id="b1" hidden><pre>@misc{mondal2026straits,
+  title         = {Perfectly Guarding Straits: Exact Algorithms for Weak Visibility Polygons},
+  author        = {Mondal, Shouvik and Das, Udvas and Roy, Sasanka},
+  year          = {2026},
+  eprint        = {2609.15510},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CG}
+}</pre></div>
+    </li>
+  </ol>
+  <!-- EDIT: to add a paper, copy an <li> block, give its Summary/BibTeX divs new ids
+       (s3/b3, ...), and update --n. Change "Preprint" to the venue once accepted,
+       e.g. <i>SoCG 2027</i>. For a new year, add another <p class="year"> and <ol>. -->
+  <p class="muted">Coauthors: Udvas Das, Sasanka Roy.
+    <!-- EDIT: link names to homepages, e.g. <a href="...">Sasanka Roy</a> --></p>
+  <p class="muted">See also my <a href="https://arxiv.org/search/?searchtype=author&amp;query=Mondal%2C+Shouvik">arXiv listing</a>.</p>
+</section>
+
+<!-- ============================ CV ============================ -->
+<section class="tab" id="cv">
+  <h2>At a glance</h2>
+  <div class="row">
+    <span class="d">Present</span> <!-- EDIT: e.g. "2025 –" -->
+    <div>Junior Research Fellow
+      <span class="sub">Advanced Computing and Microelectronics Unit, Indian Statistical Institute, Kolkata</span></div>
+  </div>
+  <!-- EDIT: uncomment and fill in
+  <div class="row">
+    <span class="d">YYYY – YYYY</span>
+    <div>M.Sc. in ...<span class="sub">University, City</span></div>
+  </div>
+  <div class="row">
+    <span class="d">YYYY – YYYY</span>
+    <div>B.Sc. in ...<span class="sub">College, City</span></div>
+  </div>
+  -->
+
+  <h2>Curriculum vitae</h2>
+  <!-- The PDF viewer below appears automatically once a file named CV.pdf sits next to index.html. -->
+  <div class="cvbar" id="cvbar" hidden>
+    <a class="btn" href="CV.pdf" target="_blank" rel="noopener">Open PDF</a>
+    <a class="btn" href="CV.pdf" download="Shouvik_Mondal_CV.pdf">Download</a>
+  </div>
+  <div class="cvbox" id="cvbox">
+    <p class="ph">The CV will appear here once <code>CV.pdf</code> is added to the website.</p>
+  </div>
+</section>
+
+<!-- EDIT (optional): a Talks tab. Uncomment, and uncomment the matching tab link in the masthead.
+<section class="tab" id="talks">
+  <div class="row"><span class="d">Mon YYYY</span><div>Talk title<span class="sub">Venue, City</span></div></div>
+</section>
+-->
+</main>
+
+<footer>
+  <span>© 2026 Shouvik Mondal</span>
+  <span>Last modified: October 2026</span>
+</footer>
+</div>
+
+<script>
+// ---------- tabs (without JS, every section is simply shown) ----------
+const tabs=[...document.querySelectorAll('.tab')],
+      nav=[...document.querySelectorAll('.tabs a')],
+      ind=document.querySelector('.ind');
+let cur='home';
+function moveInd(){
+  const a=nav.find(x=>x.dataset.t===cur); if(!a) return;
+  ind.style.width=a.offsetWidth+'px';
+  ind.style.transform='translate('+a.offsetLeft+'px,'+(a.offsetTop+a.offsetHeight+13-ind.parentElement.clientHeight)+'px)';
+}
+function go(id,push){
+  if(!tabs.some(s=>s.id===id)) id='home';
+  cur=id;
+  tabs.forEach(s=>s.hidden=s.id!==id);
+  nav.forEach(a=>{const on=a.dataset.t===id;a.classList.toggle('on',on);a.setAttribute('aria-selected',on)});
+  moveInd();
+  if(id==='cv') loadCV();
+  if(push){try{history.pushState(null,'','#'+id)}catch(e){}}
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-t]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();go(a.dataset.t,true)}));
+addEventListener('popstate',()=>go(location.hash.slice(1)));
+addEventListener('resize',moveInd);
+if(document.fonts) document.fonts.ready.then(moveInd);
+go(location.hash.slice(1));
+
+// ---------- CV: embed CV.pdf if it exists ----------
+let cvDone=false;
+function loadCV(){
+  if(cvDone) return; cvDone=true;
+  fetch('CV.pdf',{method:'HEAD'}).then(r=>{
+    if(!r.ok) return;
+    document.getElementById('cvbar').hidden=false;
+    document.getElementById('cvbox').innerHTML=
+      '<iframe src="CV.pdf#view=FitH" title="Curriculum vitae of Shouvik Mondal" loading="lazy"></iframe>';
+  }).catch(()=>{});
+}
+
+// ---------- email ----------
+document.getElementById('mail').href='mailto:'+'shouvik.math'+'@'+'gmail.com';
+
+// ---------- Summary / BibTeX toggles ----------
+document.querySelectorAll('.pl button').forEach(b=>{
+  b.setAttribute('aria-expanded','false');
+  b.onclick=()=>{
+    const el=document.getElementById(b.dataset.for), open=el.hidden;
+    el.hidden=!open; b.setAttribute('aria-expanded',open);
+  };
+});
+
+// ---------- figure: tap a guard on touch screens ----------
+document.querySelectorAll('.pair').forEach(g=>g.addEventListener('click',()=>g.classList.toggle('on')));
+</script>
+</body>
+</html>
